@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { ClipboardList, BarChart3 } from 'lucide-react';
+import { ClipboardList, BarChart3, Filter } from 'lucide-react';
 
 export const Layout: React.FC = () => {
     return (
@@ -26,6 +26,13 @@ export const Layout: React.FC = () => {
                                 >
                                     <BarChart3 className="w-4 h-4 mr-2" />
                                     Results
+                                </Link>
+                                <Link
+                                    to="/breakdown"
+                                    className="border-transparent text-gray-500 hover:border-secondary hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                                >
+                                    <Filter className="w-4 h-4 mr-2" />
+                                    Process Breakdown
                                 </Link>
                             </nav>
                         </div>

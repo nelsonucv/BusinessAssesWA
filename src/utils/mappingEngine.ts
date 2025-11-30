@@ -1,7 +1,13 @@
 import type { Program } from '../types';
 import { programs } from '../data/programs';
 
-export const getRecommendedPrograms = (answers: Record<string, any>): Program[] => {
+export interface ProgramResult {
+    program: Program;
+    status: 'match' | 'rejected';
+    reasons: string[];
+}
+
+export const evaluatePrograms = (answers: Record<string, any>): ProgramResult[] => {
     // Helper to get answer value
     const getAnswer = (id: string) => answers[id];
 
@@ -26,21 +32,18 @@ export const getRecommendedPrograms = (answers: Record<string, any>): Program[] 
 
     const turnoverValue = getMinTurnoverValue(turnover);
 
-    return programs.filter((program) => {
+    return programs.map((program) => {
         const { eligibility, tags } = program;
+        const reasons: string[] = [];
 
         // 1. Turnover Check
         if (eligibility.minTurnover && turnoverValue < eligibility.minTurnover) {
-            return false;
+            reasons.push(`Annual turnover is below the minimum requirement of $${eligibility.minTurnover.toLocaleString()}.`);
         }
 
         // 2. Location Check
-        if (eligibility.mustBeInWA && location !== 'regional' && location !== 'metro') {
-            // Assuming all users are in WA for this MVP, but if they selected nothing?
-            // Let's assume strict check if we had a "Not in WA" option.
-        }
         if (eligibility.regions && eligibility.regions.includes('Regional Western Australia') && location !== 'regional') {
-            return false;
+            reasons.push('This program is exclusively for businesses located in Regional Western Australia.');
         }
 
         // 3. Industry/Sector Check
@@ -49,31 +52,45 @@ export const getRecommendedPrograms = (answers: Record<string, any>): Program[] 
             const programIsAgri = eligibility.sectors.includes('Agriculture') || eligibility.sectors.includes('Food & Beverage');
 
             if (programIsAgri && !isAgri) {
-                return false;
+                reasons.push(`Industry mismatch. This program targets: ${eligibility.sectors.join(', ')}.`);
             }
         }
 
         // 4. Goal Matching (Strategic Intent)
         if (goal) {
-            if (goal === 'innovation' && !tags.includes('Innovation') && !tags.includes('Commercialization')) return false;
-            if (goal === 'digital' && !tags.includes('Digital')) return false;
-            if (goal === 'export_asia' && !tags.includes('Export') && !tags.includes('Asia')) return false;
-            if (goal === 'infrastructure' && !tags.includes('Infrastructure')) return false;
+            let goalMismatch = false;
+            if (goal === 'innovation' && !tags.includes('Innovation') && !tags.includes('Commercialization')) goalMismatch = true;
+            if (goal === 'digital' && !tags.includes('Digital')) goalMismatch = true;
+            if (goal === 'export_asia' && !tags.includes('Export') && !tags.includes('Asia')) goalMismatch = true;
+            if (goal === 'infrastructure' && !tags.includes('Infrastructure')) goalMismatch = true;
+            
+            if (goalMismatch) {
+                reasons.push(`Does not align with your primary goal (${goal.replace('_', ' ')}).`);
+            }
         }
 
         // 5. Co-contribution Check
         if (program.usefulInfo?.includes('50%') && coContribution !== '50_percent') {
-            // Strict check: if program needs 50% and user can't give 50%, exclude?
-            // Maybe too strict. Let's keep it as a soft filter or just prioritize.
-            // For now, let's exclude if they explicitly said "No" to any contribution.
-            if (coContribution === 'no') return false;
+            if (coContribution === 'no') {
+                reasons.push('Requires a 50% cash co-contribution.');
+            }
         }
 
         // 6. Years Operating Check
         if (eligibility.minYearsOperating && yearsOperating < eligibility.minYearsOperating) {
-            return false;
+            reasons.push(`Business must be operating for at least ${eligibility.minYearsOperating} years.`);
         }
 
-        return true;
+        return {
+            program,
+            status: reasons.length === 0 ? 'match' : 'rejected',
+            reasons
+        };
     });
+};
+
+export const getRecommendedPrograms = (answers: Record<string, any>): Program[] => {
+    return evaluatePrograms(answers)
+        .filter(result => result.status === 'match')
+        .map(result => result.program);
 };

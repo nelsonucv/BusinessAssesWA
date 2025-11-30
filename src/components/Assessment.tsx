@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questions } from '../data/questions';
 import { ChevronRight, ChevronLeft, CheckCircle } from 'lucide-react';
@@ -7,6 +7,11 @@ export const Assessment: React.FC = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({});
+
+    // Clear previous results when starting a new assessment
+    useEffect(() => {
+        localStorage.removeItem('assessment_answers');
+    }, []);
 
     const question = questions[currentStep];
     const isLastQuestion = currentStep === questions.length - 1;
