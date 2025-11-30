@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { programs } from '../data/programs';
 import { getRecommendedPrograms } from '../utils/mappingEngine';
 import { ValueRealization } from './ValueRealization';
 import { ExternalLink, ArrowRight, Search } from 'lucide-react';
@@ -15,7 +14,7 @@ export const Results: React.FC = () => {
         if (stored) {
             const parsed = JSON.parse(stored);
             setAnswers(parsed);
-            setRecommended(getRecommendedPrograms(programs, parsed));
+            setRecommended(getRecommendedPrograms(parsed));
         }
     }, []);
 
@@ -26,7 +25,7 @@ export const Results: React.FC = () => {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-                <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Your Opportunity Roadmap</h1>
+                <h1 className="text-3xl font-serif font-bold text-primary sm:text-4xl">Your Opportunity Roadmap</h1>
                 <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
                     Based on your assessment, here are the programs and opportunities aligned with your business goals.
                 </p>
@@ -36,7 +35,7 @@ export const Results: React.FC = () => {
             <ValueRealization answers={answers} />
 
             <div className="mt-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Recommended Programs</h2>
+                <h2 className="text-2xl font-serif font-bold text-gray-900 mb-6">Recommended Programs</h2>
 
                 {recommended.length > 0 ? (
                     <div className="grid gap-6 md:grid-cols-2">
@@ -45,17 +44,32 @@ export const Results: React.FC = () => {
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${program.category === 'Grant' ? 'bg-green-100 text-green-800' :
-                                                program.category === 'Voucher' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                                            program.category === 'Voucher' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
                                             }`}>
                                             {program.category}
                                         </span>
                                         <span className="text-xs text-gray-500">{program.agency}</span>
                                     </div>
-                                    <h3 className="text-lg font-medium text-gray-900 mb-2">{program.name}</h3>
+                                    <h3 className="text-lg font-bold text-primary mb-2">{program.name}</h3>
                                     <p className="text-gray-500 text-sm mb-4">{program.description}</p>
+
+                                    {/* New Fields: Deadline & Useful Info */}
+                                    <div className="mb-4 space-y-1">
+                                        {program.deadline && (
+                                            <div className="text-xs text-red-600 font-medium">
+                                                Deadline: {program.deadline}
+                                            </div>
+                                        )}
+                                        {program.usefulInfo && (
+                                            <div className="text-xs text-gray-600 italic">
+                                                Note: {program.usefulInfo}
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         {program.tags.map(tag => (
-                                            <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                            <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface text-gray-600">
                                                 {tag}
                                             </span>
                                         ))}
@@ -66,7 +80,7 @@ export const Results: React.FC = () => {
                                         href={program.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                                        className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light transition-colors"
                                     >
                                         View Program <ExternalLink className="w-4 h-4 ml-2" />
                                     </a>
@@ -75,13 +89,13 @@ export const Results: React.FC = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+                    <div className="bg-secondary/10 border-l-4 border-secondary p-4 mb-8">
                         <div className="flex">
                             <div className="flex-shrink-0">
-                                <Search className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+                                <Search className="h-5 w-5 text-secondary" aria-hidden="true" />
                             </div>
                             <div className="ml-3">
-                                <p className="text-sm text-yellow-700">
+                                <p className="text-sm text-gray-700">
                                     We couldn't find specific matches in our curated database, but don't worry!
                                 </p>
                             </div>
@@ -107,7 +121,7 @@ export const Results: React.FC = () => {
             </div>
 
             <div className="mt-12 text-center">
-                <Link to="/assessment" className="text-indigo-600 hover:text-indigo-500 font-medium">
+                <Link to="/assessment" className="text-primary hover:text-primary-light font-medium">
                     Retake Assessment
                 </Link>
             </div>

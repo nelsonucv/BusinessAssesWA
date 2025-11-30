@@ -1,140 +1,113 @@
 import type { Question } from '../types';
 
 export const questions: Question[] = [
-    // Section 1: Business Profile
     {
-        id: 'turnover',
-        section: 'Business Profile',
+        id: 'q_turnover',
         text: 'What is your annual turnover?',
         type: 'single_choice',
         options: [
-            { label: 'Less than $100k', value: 'lt_100k' },
+            { label: 'Less than $75k', value: 'lt_75k' },
+            { label: '$75k - $100k', value: '75k_100k' },
             { label: '$100k - $200k', value: '100k_200k' },
-            { label: '$200k - $1M', value: '200k_1m' },
+            { label: '$200k - $500k', value: '200k_500k' },
+            { label: '$500k - $1M', value: '500k_1m' },
             { label: 'More than $1M', value: 'gt_1m' },
         ],
+        category: 'Business Profile',
     },
     {
-        id: 'employees',
-        section: 'Business Profile',
-        text: 'How many full-time equivalent employees do you have?',
+        id: 'q_employees',
+        text: 'How many full-time equivalent (FTE) employees do you have?',
         type: 'number',
+        category: 'Business Profile',
     },
     {
-        id: 'location',
-        section: 'Business Profile',
+        id: 'q_years_operating',
+        text: 'How many years have you been operating?',
+        type: 'number',
+        category: 'Business Profile',
+    },
+    {
+        id: 'q_location',
         text: 'Where is your primary place of business?',
         type: 'single_choice',
         options: [
-            { label: 'Perth Metropolitan Area', value: 'Metro' },
-            { label: 'Regional Western Australia', value: 'Regional' },
+            { label: 'Perth Metropolitan Area', value: 'metro' },
+            { label: 'Regional Western Australia', value: 'regional' },
         ],
+        category: 'Business Profile',
     },
     {
-        id: 'industry',
-        section: 'Business Profile',
-        text: 'What is your primary industry?',
+        id: 'q_aboriginal',
+        text: 'Are you an Aboriginal-owned business?',
         type: 'single_choice',
         options: [
-            { label: 'Agriculture, Forestry & Fishing', value: 'Agribusiness' },
-            { label: 'Manufacturing', value: 'Manufacturing' },
-            { label: 'Food & Beverage', value: 'Food & Beverage' },
-            { label: 'Other', value: 'Other' },
-        ],
-    },
-    {
-        id: 'aboriginal_business',
-        section: 'Business Profile',
-        text: 'Are you a registered Aboriginal business?',
-        type: 'single_choice',
-        options: [
-            { label: 'Yes', value: true },
-            { label: 'No', value: false },
-        ],
-    },
-
-    // Section 2: Operational Maturity
-    {
-        id: 'strategic_plan',
-        section: 'Operational Maturity',
-        text: 'Do you have a documented strategic business plan?',
-        type: 'single_choice',
-        options: [
-            { label: 'Yes, and we review it regularly', value: 'yes_active' },
-            { label: 'Yes, but it is outdated', value: 'yes_outdated' },
+            { label: 'Yes', value: 'yes' },
             { label: 'No', value: 'no' },
         ],
+        category: 'Business Profile',
     },
-
-    // Section 3: Digital Capability
     {
-        id: 'cloud_usage',
-        section: 'Digital Capability',
-        text: 'Do you currently use cloud-based software for finance or operations?',
+        id: 'q_industry',
+        text: 'Which industry best describes your business?',
         type: 'single_choice',
         options: [
-            { label: 'Yes, extensively', value: 'high' },
-            { label: 'Some (e.g., Xero/MYOB only)', value: 'medium' },
-            { label: 'No, mostly paper/spreadsheets', value: 'low' },
+            { label: 'Agriculture, Forestry & Fishing', value: 'agriculture' },
+            { label: 'Food & Beverage Manufacturing', value: 'food_beverage' },
+            { label: 'Mining & METS', value: 'mining' },
+            { label: 'Tourism & Events', value: 'tourism' },
+            { label: 'Construction', value: 'construction' },
+            { label: 'Professional Services', value: 'services' },
+            { label: 'Other', value: 'other' },
         ],
+        category: 'Business Profile',
     },
     {
-        id: 'cyber_plan',
-        section: 'Digital Capability',
-        text: 'Do you have a cybersecurity incident response plan?',
+        id: 'q_goal',
+        text: 'What is your primary goal right now?',
         type: 'single_choice',
         options: [
-            { label: 'Yes', value: true },
-            { label: 'No', value: false },
+            { label: 'Commercialize a new innovation', value: 'innovation' },
+            { label: 'Improve digital systems & efficiency', value: 'digital' },
+            { label: 'Expand to Asian markets', value: 'export_asia' },
+            { label: 'Buy new equipment or infrastructure', value: 'infrastructure' },
+            { label: 'General business growth & planning', value: 'growth' },
         ],
+        category: 'Strategic Intent',
     },
-
-    // Section 4: Market & Export
     {
-        id: 'export_intent',
-        section: 'Market & Export',
-        text: 'Are you currently exporting or planning to export to Asia?',
+        id: 'q_co_contribution',
+        text: 'Are you able to provide a cash co-contribution for a grant?',
+        type: 'single_choice',
+        options: [
+            { label: 'Yes, at least 50%', value: '50_percent' },
+            { label: 'Yes, at least 20%', value: '20_percent' },
+            { label: 'No', value: 'no' },
+        ],
+        category: 'Financial',
+    },
+    {
+        id: 'q_export',
+        text: 'Are you currently exporting or planning to export?',
         type: 'single_choice',
         options: [
             { label: 'Yes, currently exporting', value: 'exporting' },
-            { label: 'Planning to export soon', value: 'planning' },
+            { label: 'Planning to export', value: 'planning' },
             { label: 'No', value: 'no' },
         ],
+        category: 'Market & Export',
     },
-
-    // Section 5: Innovation & Sustainability
+    // Value Realization Inputs
     {
-        id: 'ev_charging',
-        section: 'Innovation & Sustainability',
-        text: 'Are you looking to install EV charging stations at your workplace?',
-        type: 'single_choice',
-        options: [
-            { label: 'Yes', value: true },
-            { label: 'No', value: false },
-        ],
-    },
-    {
-        id: 'new_product',
-        section: 'Innovation & Sustainability',
-        text: 'Are you developing a new food or beverage product?',
-        type: 'single_choice',
-        options: [
-            { label: 'Yes', value: true },
-            { label: 'No', value: false },
-        ],
-    },
-
-    // Section 6: Value Drivers (ROI Inputs)
-    {
-        id: 'manual_hours',
-        section: 'Value Drivers',
-        text: 'How many hours per week do you spend on manual data entry?',
+        id: 'q_manual_hours',
+        text: 'How many hours per week does your team spend on manual data entry or repetitive tasks?',
         type: 'number',
+        category: 'Value Drivers',
     },
     {
-        id: 'hourly_wage',
-        section: 'Value Drivers',
-        text: 'What is the average hourly cost of your administrative staff?',
-        type: 'currency',
+        id: 'q_hourly_wage',
+        text: 'What is the average hourly wage for these roles?',
+        type: 'number',
+        category: 'Value Drivers',
     },
 ];

@@ -42,7 +42,7 @@ export const Assessment: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div
-                        className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                        className="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out"
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -50,10 +50,10 @@ export const Assessment: React.FC = () => {
 
             <div className="bg-white shadow sm:rounded-lg p-8 transition-all duration-500">
                 <div className="mb-6">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mb-4">
-                        {question.section}
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mb-4">
+                        {question.category}
                     </span>
-                    <h2 className="text-2xl font-bold text-gray-900">{question.text}</h2>
+                    <h2 className="text-2xl font-serif font-bold text-gray-900">{question.text}</h2>
                 </div>
 
                 <div className="space-y-4 mb-8">
@@ -62,15 +62,15 @@ export const Assessment: React.FC = () => {
                             key={option.value.toString()}
                             onClick={() => handleAnswer(option.value)}
                             className={`w-full text-left px-4 py-3 border rounded-lg flex items-center justify-between transition-colors ${answers[question.id] === option.value
-                                ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600'
+                                ? 'border-primary bg-primary/5 ring-1 ring-primary'
                                 : 'border-gray-300 hover:bg-gray-50'
                                 }`}
                         >
-                            <span className={`font-medium ${answers[question.id] === option.value ? 'text-indigo-900' : 'text-gray-900'}`}>
+                            <span className={`font-medium ${answers[question.id] === option.value ? 'text-primary' : 'text-gray-900'}`}>
                                 {option.label}
                             </span>
                             {answers[question.id] === option.value && (
-                                <CheckCircle className="w-5 h-5 text-indigo-600" />
+                                <CheckCircle className="w-5 h-5 text-primary" />
                             )}
                         </button>
                     ))}
@@ -84,7 +84,7 @@ export const Assessment: React.FC = () => {
                             )}
                             <input
                                 type="number"
-                                className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-3 ${question.type === 'currency' ? 'pl-7' : ''
+                                className={`focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md p-3 ${question.type === 'currency' ? 'pl-7' : ''
                                     }`}
                                 placeholder="0"
                                 value={answers[question.id] || ''}
@@ -107,7 +107,7 @@ export const Assessment: React.FC = () => {
                     <button
                         onClick={handleNext}
                         disabled={answers[question.id] === undefined}
-                        className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 ${answers[question.id] === undefined ? 'opacity-50 cursor-not-allowed' : ''
+                        className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light ${answers[question.id] === undefined ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                     >
                         {isLastQuestion ? 'See Results' : 'Next'}
