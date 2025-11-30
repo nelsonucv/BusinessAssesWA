@@ -1,9 +1,9 @@
-import type { Program, AssessmentAnswer } from '../types';
+import type { Program } from '../types';
 import { programs } from '../data/programs';
 
-export const getRecommendedPrograms = (answers: AssessmentAnswer[]): Program[] => {
+export const getRecommendedPrograms = (answers: Record<string, any>): Program[] => {
     // Helper to get answer value
-    const getAnswer = (id: string) => answers.find((a) => a.questionId === id)?.value;
+    const getAnswer = (id: string) => answers[id];
 
     const turnover = getAnswer('q_turnover');
     const location = getAnswer('q_location');
