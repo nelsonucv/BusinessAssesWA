@@ -1,6 +1,95 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+
+const grantsData = [
+  {
+    id: 1,
+    title: "Farmers’ Market Grant Scheme",
+    category: "Food and beverage",
+    status: "Open",
+    closes: "31 Dec 2027",
+    description: "Funding to support the establishment and expansion of farmers' markets to improve access to local produce."
+  },
+  {
+    id: 2,
+    title: "Disaster Recovery Funding Arrangements",
+    category: "Emergencies",
+    status: "Open",
+    closes: "31 Dec 2028",
+    description: "Financial assistance for primary producers and communities affected by eligible natural disasters."
+  },
+  {
+    id: 3,
+    title: "Gnangara Horticulture Water Use Efficiency Grant",
+    category: "Agriculture",
+    status: "Open",
+    closes: "30 Jun 2026",
+    description: "Support for horticulture businesses in the Gnangara groundwater system to improve water use efficiency."
+  },
+  {
+    id: 4,
+    title: "Farm Debt Mediation Scheme WA",
+    category: "Agriculture",
+    status: "Open",
+    closes: "30 Jun 2026",
+    description: "Provides a structured negotiation process for farmers and lenders to resolve farm debt issues."
+  },
+  {
+    id: 5,
+    title: "Regional Economic Development (RED) Grants",
+    category: "Regional development",
+    status: "Closed",
+    closes: "9 Jan 2026",
+    description: "State Government initiative investing in community-driven projects that contribute to economic growth in regional Western Australia."
+  },
+  {
+    id: 6,
+    title: "John Cripps Horticulture Scholarships",
+    category: "Agriculture",
+    status: "Closed",
+    closes: "13 Feb 2026",
+    description: "Scholarships to support individuals pursuing a career in Western Australia's horticulture industry."
+  }
+];
 
 export default function Grants() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState({
+    Open: true,
+    Closed: false
+  });
+  
+  const [categoryFilter, setCategoryFilter] = useState({
+    'Agriculture': false,
+    'Regional development': false,
+    'Emergencies': false,
+    'Food and beverage': false
+  });
+
+  const handleStatusChange = (status) => {
+    setStatusFilter(prev => ({ ...prev, [status]: !prev[status] }));
+  };
+
+  const handleCategoryChange = (category) => {
+    setCategoryFilter(prev => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const filteredGrants = useMemo(() => {
+    return grantsData.filter(grant => {
+      // Search filter
+      const searchMatch = grant.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          grant.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Status filter
+      const statusMatch = statusFilter[grant.status];
+
+      // Category filter (if none selected, show all. If some selected, must match one)
+      const activeCategories = Object.keys(categoryFilter).filter(k => categoryFilter[k]);
+      const categoryMatch = activeCategories.length === 0 || activeCategories.includes(grant.category);
+
+      return searchMatch && statusMatch && categoryMatch;
+    });
+  }, [searchQuery, statusFilter, categoryFilter]);
+
   return (
     <>
       {/* SideNavBar */}
@@ -56,39 +145,47 @@ export default function Grants() {
                 <label className="block font-label-md text-label-md text-on-surface-variant mb-xs">Search</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-                  <input className="w-full pl-10 pr-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-lowest" placeholder="Keywords..." type="text"/>
+                  <input 
+                    className="w-full pl-10 pr-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-lowest" 
+                    placeholder="Keywords..." 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
               </div>
               {/* Status */}
               <div className="mb-lg border-t border-outline-variant pt-md">
                 <h4 className="font-label-md text-label-md text-on-surface mb-sm">Status</h4>
                 <div className="flex flex-col gap-sm">
-                  <label className="flex items-center gap-sm cursor-pointer">
-                    <input defaultChecked className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
-                    <span className="font-body-md text-body-md text-on-surface-variant">Open</span>
-                  </label>
-                  <label className="flex items-center gap-sm cursor-pointer">
-                    <input className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
-                    <span className="font-body-md text-body-md text-on-surface-variant">Closed</span>
-                  </label>
+                  {Object.keys(statusFilter).map(status => (
+                    <label key={status} className="flex items-center gap-sm cursor-pointer">
+                      <input 
+                        className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" 
+                        type="checkbox"
+                        checked={statusFilter[status]}
+                        onChange={() => handleStatusChange(status)}
+                      />
+                      <span className="font-body-md text-body-md text-on-surface-variant">{status}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
               {/* Category */}
               <div className="mb-lg border-t border-outline-variant pt-md">
                 <h4 className="font-label-md text-label-md text-on-surface mb-sm">Category</h4>
                 <div className="flex flex-col gap-sm">
-                  <label className="flex items-center gap-sm cursor-pointer">
-                    <input className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
-                    <span className="font-body-md text-body-md text-on-surface-variant">Agriculture</span>
-                  </label>
-                  <label className="flex items-center gap-sm cursor-pointer">
-                    <input className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
-                    <span className="font-body-md text-body-md text-on-surface-variant">Regional</span>
-                  </label>
-                  <label className="flex items-center gap-sm cursor-pointer">
-                    <input className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
-                    <span className="font-body-md text-body-md text-on-surface-variant">Sustainability</span>
-                  </label>
+                  {Object.keys(categoryFilter).map(category => (
+                    <label key={category} className="flex items-center gap-sm cursor-pointer">
+                      <input 
+                        className="form-checkbox text-primary rounded border-outline-variant focus:ring-primary" 
+                        type="checkbox"
+                        checked={categoryFilter[category]}
+                        onChange={() => handleCategoryChange(category)}
+                      />
+                      <span className="font-body-md text-body-md text-on-surface-variant">{category}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
@@ -97,7 +194,7 @@ export default function Grants() {
           {/* Grants List */}
           <div className="flex-grow flex flex-col gap-md">
             <div className="flex justify-between items-end mb-sm">
-              <p className="font-body-md text-body-md text-on-surface-variant">Showing 12 opportunities</p>
+              <p className="font-body-md text-body-md text-on-surface-variant">Showing {filteredGrants.length} opportunit{filteredGrants.length === 1 ? 'y' : 'ies'}</p>
               <select className="border border-outline-variant rounded py-1 px-3 bg-surface-container-lowest font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary">
                 <option>Sort by: Closing Soon</option>
                 <option>Sort by: Newest</option>
@@ -105,62 +202,52 @@ export default function Grants() {
               </select>
             </div>
             
-            {/* Grant Card 1 */}
-            <article className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg hover:shadow-md transition-shadow duration-200">
-              <div className="flex flex-col md:flex-row justify-between gap-md mb-md">
-                <div>
-                  <div className="flex items-center gap-sm mb-xs">
-                    <span className="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed-variant px-2 py-1 rounded">Agriculture</span>
-                    <span className="font-label-sm text-label-sm bg-[#e8f5e9] text-[#1b5e20] px-2 py-1 rounded flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#4caf50]"></span> Open
-                    </span>
-                  </div>
-                  <h2 className="font-headline-md text-headline-md text-primary mb-sm">Sustainable Farming Innovation Grant</h2>
-                  <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">Funding to support the adoption of new technologies and sustainable practices in broadacre farming and horticulture. Up to $50,000 in matched funding available.</p>
-                </div>
-                <div className="flex-shrink-0 text-right md:w-48 bg-surface-container p-sm rounded border border-outline-variant self-start">
-                  <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Closes</p>
-                  <p className="font-body-md text-body-md text-on-surface font-semibold">15 Nov 2024</p>
-                </div>
-              </div>
-              <div className="border-t border-outline-variant pt-md flex justify-between items-center mt-auto">
-                <a className="font-label-md text-label-md text-primary-container hover:text-primary transition-colors flex items-center gap-xs" href="#">
-                  View Guidelines <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-                <button className="bg-[#b58500] text-on-primary font-label-md text-label-md py-2 px-4 rounded hover:bg-secondary transition-colors font-bold">
-                  Check Eligibility
+            {filteredGrants.length === 0 ? (
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-xl text-center">
+                <p className="font-body-lg text-body-lg text-on-surface-variant">No grants match your current filters.</p>
+                <button 
+                  onClick={() => {
+                    setSearchQuery('');
+                    setStatusFilter({Open: true, Closed: true});
+                    setCategoryFilter({'Agriculture': false, 'Regional development': false, 'Emergencies': false, 'Food and beverage': false});
+                  }}
+                  className="mt-md font-label-md text-label-md text-primary hover:underline">
+                  Clear Filters
                 </button>
               </div>
-            </article>
-            
-            {/* Grant Card 2 */}
-            <article className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg hover:shadow-md transition-shadow duration-200">
-              <div className="flex flex-col md:flex-row justify-between gap-md mb-md">
-                <div>
-                  <div className="flex items-center gap-sm mb-xs">
-                    <span className="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed-variant px-2 py-1 rounded">Regional</span>
-                    <span className="font-label-sm text-label-sm bg-[#e8f5e9] text-[#1b5e20] px-2 py-1 rounded flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#4caf50]"></span> Open
-                    </span>
+            ) : (
+              filteredGrants.map(grant => (
+                <article key={grant.id} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg hover:shadow-md transition-shadow duration-200">
+                  <div className="flex flex-col md:flex-row justify-between gap-md mb-md">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-sm mb-xs">
+                        <span className="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed-variant px-2 py-1 rounded">{grant.category}</span>
+                        <span className={`font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1 ${grant.status === 'Open' ? 'bg-[#e8f5e9] text-[#1b5e20]' : 'bg-surface-variant text-on-surface-variant'}`}>
+                          {grant.status === 'Open' && <span className="w-2 h-2 rounded-full bg-[#4caf50]"></span>}
+                          {grant.status}
+                        </span>
+                      </div>
+                      <h2 className="font-headline-md text-headline-md text-primary mb-sm">{grant.title}</h2>
+                      <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">{grant.description}</p>
+                    </div>
+                    <div className="flex-shrink-0 text-right md:w-48 bg-surface-container p-sm rounded border border-outline-variant self-start">
+                      <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Closes</p>
+                      <p className="font-body-md text-body-md text-on-surface font-semibold">{grant.closes}</p>
+                    </div>
                   </div>
-                  <h2 className="font-headline-md text-headline-md text-primary mb-sm">Regional Economic Development (RED) Grants</h2>
-                  <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">State Government initiative investing in community-driven projects that contribute to economic growth in regional Western Australia.</p>
-                </div>
-                <div className="flex-shrink-0 text-right md:w-48 bg-surface-container p-sm rounded border border-outline-variant self-start">
-                  <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Closes</p>
-                  <p className="font-body-md text-body-md text-on-surface font-semibold">30 Nov 2024</p>
-                </div>
-              </div>
-              <div className="border-t border-outline-variant pt-md flex justify-between items-center mt-auto">
-                <a className="font-label-md text-label-md text-primary-container hover:text-primary transition-colors flex items-center gap-xs" href="#">
-                  View Guidelines <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-                <button className="bg-[#b58500] text-on-primary font-label-md text-label-md py-2 px-4 rounded hover:bg-secondary transition-colors font-bold">
-                  Check Eligibility
-                </button>
-              </div>
-            </article>
-            
+                  <div className="border-t border-outline-variant pt-md flex justify-between items-center mt-auto">
+                    <a className="font-label-md text-label-md text-primary-container hover:text-primary transition-colors flex items-center gap-xs" href="#">
+                      View Guidelines <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                    {grant.status === 'Open' && (
+                      <button className="bg-[#b58500] text-on-primary font-label-md text-label-md py-2 px-4 rounded hover:bg-secondary transition-colors font-bold">
+                        Check Eligibility
+                      </button>
+                    )}
+                  </div>
+                </article>
+              ))
+            )}
           </div>
         </div>
       </main>
